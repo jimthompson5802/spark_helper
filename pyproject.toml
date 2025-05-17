@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "spark_helper"
 version = "0.0.1.dev0"
-description = "A helper package for working with Apache Spark"
+description = "A helper to generate Spark configuration files and start a Spark session."
 readme = "README.md"
 authors = [
     {name = "Your Name", email = "your.email@example.com"}
