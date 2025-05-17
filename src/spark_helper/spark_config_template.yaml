@@ -1,0 +1,27 @@
+# Spark Application Configuration Template
+# This template provides common configuration parameters for Spark applications
+
+# Application information
+appName: "SparkHelperApp"
+
+# Spark Master 
+# Use local[*] for local development
+# for standalone mode, use spark://spark-master:7077
+# for yar
+master: "local[*]"
+
+# deployment mode
+spark.submit.deployMode: "client"  # or "cluster"
+  
+# Spark Driver settings
+spark.driver.memory: "4g"
+spark.driver.cores: 2
+spark.driver.instances: 1
+spark.driver.pythonVersion: "3.11"  # Python version for PySpark
+
+# Spark Executor settings
+spark.executor.memory: "4g"
+spark.executor.cores: 2
+spark.executor.instances: 2
+spark.executor.pythonVersion: "3.11"  # Python version for PySpark
+  
