@@ -1,13 +1,13 @@
 # Spark Helper
 
-A Python package to simplify working with Apache Spark.
+A Python package to simplify working with Apache Spark by providing utilities for SparkSession creation and configuration management.
 
 ## Features
 
-- Easy SparkSession creation with customizable configurations
-- YAML-based configuration for Spark applications
-- Helper functions for common Spark operations
-- Command-line interface for basic Spark tasks
+- Simple SparkSession creation from YAML configuration files
+- Generate template YAML configuration files for Spark applications
+- Command-line interface for generating Spark configurations
+- Type hints and comprehensive documentation throughout
 
 ## Installation
 
@@ -26,27 +26,6 @@ pip install -e ".[dev]"
 ```
 
 ## Usage
-
-### Basic usage
-
-```python
-from spark_helper.core import get_spark_session
-
-# Create a basic SparkSession
-spark = get_spark_session(app_name="MySparkApp")
-
-# Create a SparkSession with custom configuration
-config = {
-    "spark.executor.memory": "4g",
-    "spark.executor.cores": "2",
-    "spark.driver.memory": "2g"
-}
-spark = get_spark_session(app_name="CustomSparkApp", config=config)
-
-# Use helper functions
-from spark_helper.core import read_csv
-df = read_csv(spark, "path/to/data.csv")
-```
 
 ### Configuration File Support
 
@@ -72,15 +51,22 @@ Or use the command-line tool:
 
 ```bash
 # Generate a config file
-spark-config --file_path my_config.yaml
+generate-spark-config --file_path my_config.yaml
 ```
 
-### Command Line Interface
+### Example Script
+
+The package includes an example script that demonstrates how to use the package:
 
 ```bash
-# Run the CLI tool
-python -m spark_helper.cli --app-name "MySpark"
+# Run the example script
+python example.py
 ```
+
+This will:
+1. Generate a custom configuration file
+2. Create a SparkSession using that configuration
+3. Display information about the SparkSession and its configuration
 
 ## Development
 
@@ -93,13 +79,22 @@ pip install -e ".[dev]"
 # Run tests
 pytest
 
-# Run tests including those that require Spark
-pytest --run-spark
-
 # Format code
 black src tests
 isort src tests
+
+# Lint code
+flake8 src tests
+
+# Check types
+mypy src
 ```
+
+## Documentation
+
+- [User Guide](docs/index.md)
+- [Getting Started](docs/getting_started.md)
+- [Module Reference](docs/modules.md)
 
 ## License
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Spark Helper is a Python package that provides utilities and helper functions for working with Apache Spark. It aims to simplify common Spark operations and provide an easier API for various tasks.
+Spark Helper is a Python package that provides utilities for working with Apache Spark configurations. It focuses on simplifying SparkSession creation through YAML-based configuration files.
 
 ## Installation
 
@@ -16,29 +16,13 @@ Or for development:
 pip install -e ".[dev]"
 ```
 
+For more detailed setup instructions, see the [Getting Started Guide](getting_started.md).
+
 ## Core Features
 
 ### SparkSession Management
 
-The `core.py` module provides utilities for creating and managing SparkSessions:
-
-```python
-from spark_helper.core import get_spark_session
-
-# Create a basic SparkSession
-spark = get_spark_session(app_name="MySparkApp")
-
-# Create a SparkSession with custom configuration
-config = {
-    "spark.executor.memory": "4g",
-    "spark.executor.cores": "2"
-}
-spark = get_spark_session(app_name="CustomSparkApp", config=config)
-```
-
-### Configuration File Support
-
-You can also create a SparkSession from a YAML configuration file:
+The `core.py` module provides utilities for creating SparkSessions from YAML configuration files:
 
 ```python
 from spark_helper.core import create_spark_session
@@ -46,6 +30,8 @@ from spark_helper.core import create_spark_session
 # Create a SparkSession from a YAML configuration file
 spark = create_spark_session("spark_config.yaml")
 ```
+
+### Configuration File Support
 
 #### Generating Configuration Files
 
@@ -65,10 +51,10 @@ You can also use the command-line tool:
 
 ```bash
 # Print template to stdout
-spark-config
+generate-spark-config
 
 # Save template to file
-spark-config --file_path my_config.yaml
+generate-spark-config --file_path my_config.yaml
 ```
 
 #### Sample Configuration
@@ -93,21 +79,36 @@ spark.executor.cores: 2
 spark.executor.instances: 2
 ```
 
-### Data Reading Utilities
+## Example Script
+
+The package includes an example script demonstrating how to use the package:
 
 ```python
-from spark_helper.core import read_csv
+from spark_helper.core import create_config_yaml, create_spark_session
 
-# Read a CSV file
-df = read_csv(spark, "path/to/file.csv", header=True, infer_schema=True)
+# Generate a config file
+config_file = "custom_config.yaml"
+create_config_yaml(config_file)
+
+# Create a SparkSession using the config
+spark = create_spark_session(config_file)
+
+# Get configuration values
+app_name = spark.conf.get('spark.app.name')
+print(f"Created SparkSession with app name: {app_name}")
+
+# View active configuration
+for item in sorted(spark.sparkContext.getConf().getAll()):
+    print(f"{item[0]}: {item[1]}")
+
+# Stop the session
+spark.stop()
 ```
 
-## Command Line Interface
-
-Spark Helper includes a command-line interface for quick tasks:
+You can run this example using:
 
 ```bash
-python -m spark_helper.cli --app-name "MySparkApp"
+python example.py
 ```
 
 ## Development
@@ -117,9 +118,6 @@ python -m spark_helper.cli --app-name "MySparkApp"
 ```bash
 # Run all tests
 pytest
-
-# Run tests including those that require Spark
-pytest --run-spark
 ```
 
 ### Code Style
@@ -138,3 +136,7 @@ isort src tests
 flake8 src tests
 mypy src
 ```
+
+## API Documentation
+
+For detailed documentation of the package modules and functions, see [Module Reference](modules.md).
