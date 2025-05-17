@@ -18,6 +18,10 @@ A Python package to simplify working with Apache Spark by providing utilities fo
 git clone https://github.com/yourusername/spark_helper.git
 cd spark_helper
 
+# create a virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+
 # Install the package in development mode
 pip install -e .
 
