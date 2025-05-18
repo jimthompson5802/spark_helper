@@ -42,7 +42,8 @@ def create_spark_session(config: Union[str, Dict[str, Any]]) -> SparkSession:
 
     Args:
         config (Union[str, Dict[str, Any]]): Path to the YAML configuration file or a dictionary
-            with configuration parameters.
+            with configuration parameters.  If dictionary it must contain, at minimum, the following key:
+            - type: The type of Spark session to create (e.g., "local").
 
     Returns:
         SparkSession: A configured SparkSession instance.
@@ -54,7 +55,7 @@ def create_spark_session(config: Union[str, Dict[str, Any]]) -> SparkSession:
 
     Examples:
         >>> spark = create_spark_session("config.yaml")
-        >>> spark = create_spark_session({"appName": "MyApp", "master": "local[*]"})
+        >>> spark = create_spark_session({"type": "local", "appName": "MyApp", "master": "local[*]"})
     """
 
     # Process the configuration parameter
@@ -69,9 +70,34 @@ def create_spark_session(config: Union[str, Dict[str, Any]]) -> SparkSession:
                 config_dict = yaml.safe_load(f)
         except Exception as e:
             raise ValueError(f"Failed to parse YAML configuration: {str(e)}")
+
     elif isinstance(config, dict):
-        # Use the dictionary directly
-        config_dict = config.copy()
+        try:
+            cluster_type = config.pop("type")
+        except KeyError:
+            raise ValueError("Configuration dictionary must contain 'type' key")
+
+        # load the template resource
+        package = importlib.import_module("spark_helper")
+        resource_name = f"spark_config_{cluster_type}_template.yaml"
+        resource = importlib.resources.files(package).joinpath(resource_name)
+
+        # Check if the resource exists
+        if not resource.is_file():
+            raise FileNotFoundError(f"Resource '{resource_name}' not found in package 'spark_helper'")
+
+        # read the spark config template
+        with resource.open("r", encoding="utf-8") as f:
+            config_template = yaml.safe_load(f)
+
+            # combine user-defined config with template
+            config_dict = config.copy()
+            # user-defined values override template values
+            for key, value in config_template.items():
+                if key not in config_dict:
+                    # add template values to config_dict if not already present
+                    config_dict[key] = value
+
     else:
         raise TypeError(f"Expected str or dict, got {type(config).__name__}")
 
@@ -85,7 +111,11 @@ def create_spark_session(config: Union[str, Dict[str, Any]]) -> SparkSession:
     builder = builder.master(master)
 
     # Set system-level configurations
-    system_level_config = yaml.safe_load(SYSTEM_LEVEL_CONFIG_YAML)
+    if isinstance(config, dict):
+        # user defined config ignores system-level config
+        system_level_config = {}
+    else:
+        system_level_config = yaml.safe_load(SYSTEM_LEVEL_CONFIG_YAML)
     for key, value in system_level_config.items():
         # Check if the key is already in the config_dict, i.e., user-defined config
         # takes precedence over system-level config

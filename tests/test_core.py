@@ -43,6 +43,7 @@ def test_create_spark_session_from_dict():
     """Test creating a SparkSession from a dictionary config."""
     # Create a config dictionary
     config = {
+        "type": "local",
         "appName": "TestDictSession",
         "master": "local[*]",
         "spark.executor.memory": "4g",

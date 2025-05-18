@@ -22,13 +22,20 @@ For more detailed setup instructions, see the [Getting Started Guide](getting_st
 
 ### SparkSession Management
 
-The `core.py` module provides utilities for creating SparkSessions from YAML configuration files:
+The `core.py` module provides utilities for creating SparkSessions from either YAML configuration files or dictionaries:
 
 ```python
 from spark_helper.core import create_spark_session
 
 # Create a SparkSession from a YAML configuration file
 spark = create_spark_session("spark_config.yaml")
+
+# OR create from a dictionary with 'type' parameter
+spark = create_spark_session({
+    "type": "local",  # Required to specify which template to use
+    "appName": "MySparkApp",
+    "spark.executor.memory": "2g"
+})
 ```
 
 ### Configuration File Support
@@ -57,6 +64,11 @@ create_config_yaml(type="local", detail="user", file_name="my_local_config.yaml"
 # Generate a cluster configuration with all settings (including system level)
 create_config_yaml(type="cluster", detail="all", file_name="cluster_config.yaml")
 ```
+
+The `create_config_yaml` function supports these parameters:
+- `type`: The type of configuration template ("local" or "cluster")
+- `detail`: Detail level ("user" for basic settings, "all" for including system-level settings)
+- `file_name`: Optional path to save the configuration (if None, outputs to stdout)
 
 You can also use the command-line tool:
 

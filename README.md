@@ -52,6 +52,7 @@ from spark_helper.core import create_spark_session
 
 # Create a SparkSession from a dictionary
 config = {
+    "type": "local",  # Required to specify which template to use
     "appName": "MySparkApp",
     "master": "local[*]",
     "spark.executor.memory": "2g",
@@ -60,7 +61,9 @@ config = {
 spark = create_spark_session(config)
 ```
 
-Generate a template configuration file:
+### Generating Configuration Templates
+
+Generate template configuration files:
 
 ```python
 from spark_helper.core import create_config_yaml

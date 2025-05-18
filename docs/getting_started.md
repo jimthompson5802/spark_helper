@@ -24,14 +24,21 @@ Generate a template Spark configuration file:
 ```python
 from spark_helper.core import create_config_yaml
 
-# Write configuration to a file
-create_config_yaml("my_spark_config.yaml")
+# Write a local configuration to a file
+create_config_yaml(type="local", detail="user", file_name="my_spark_config.yaml")
+
+# Or a cluster configuration with all details
+create_config_yaml(type="cluster", detail="all", file_name="cluster_config.yaml")
 ```
 
 Alternatively, use the command-line tool:
 
 ```bash
-generate-spark-config --file_path my_spark_config.yaml
+# Generate local configuration
+generate-spark-config --type local --file_path my_spark_config.yaml
+
+# Generate cluster configuration with all details
+generate-spark-config --type cluster --detail all --file_path cluster_config.yaml
 ```
 
 ### Step 2: Customize the Configuration
@@ -78,6 +85,7 @@ from spark_helper.core import create_spark_session
 
 # Create a SparkSession using a dictionary
 config = {
+    "type": "local",  # Required - specifies which template to use
     "appName": "MySparkApplication",
     "master": "local[4]",
     "spark.driver.memory": "8g",
@@ -93,6 +101,8 @@ df.show()
 # Stop the session when done
 spark.stop()
 ```
+
+Note: The `type` key is required in the configuration dictionary to specify which template to use (either "local" or "cluster"). Your custom settings will override any template defaults.
 
 ## Next Steps
 
