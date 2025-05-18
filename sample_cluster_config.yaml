@@ -3,10 +3,9 @@
 
 # User-specific configurations
 # Application information
-appName: "SparkClusterApp"
+appName: "SparkHelperApp"
 
 # Spark Master 
-# Use local[*] for local development
 # for standalone mode, use spark://spark-master:7077
 # for yarn mode, use yarn
 master: "spark://spark-master:7077" 
@@ -25,6 +24,13 @@ spark.executor.memory: "4g" #
 spark.executor.cores: 2 # Number of cores per executor
 spark.executor.instances: 2 # Number of executors
 spark.executor.pythonVersion: "3.11"  # Python version for PySpark
+
+
+# System related settings
+spark.network.timeout: "300s"  # Network timeout for Spark jobs
+spark.executor.heartbeatInterval: "60s"  # Heartbeat interval for executors
+spark.broadcast.compress: "true"  # Enable compression for broadcast variables
+spark.sql.adaptive.enabled: "true"  # Enable adaptive query execution
 
 
 # additional Spark configuration can be added here

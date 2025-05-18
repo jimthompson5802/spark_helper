@@ -128,9 +128,8 @@ generate-spark-config --type cluster --detail all
 appName: "SparkHelperApp"
 
 # Spark Master 
-# Use local[*] for local development
 # for standalone mode, use spark://spark-master:7077
-# for yar
+# for yarn mode, use yarn
 master: "spark://spark-master:7077" 
 
 # deployment mode
@@ -159,6 +158,7 @@ spark.sql.adaptive.enabled: "true"  # Enable adaptive query execution
 # additional Spark configuration can be added here
 # Example: Enable Hive support
 # spark.sql.catalogImplementation: "hive"
+
 ```
 
 The user is now able to modify the configuration file to suit their needs. Using the function `create_spark_session()` the user starts a SparkSession passing in the configuration file with the desired settings
