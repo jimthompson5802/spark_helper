@@ -123,11 +123,12 @@ def create_config_yaml(type: str = "local", detail: str = "user", file_name: Opt
             content = f.read()
 
             # add system-level config if detail is "all"
-            if detail == "all":
+            if type != "local" and detail == "all":
                 content = content + "\n" + SYSTEM_LEVEL_CONFIG_YAML
 
             # add ending comment about adding additional configurations
-            content = content + "\n" + ENDING_CONFIG_YAML
+            if type != "local":
+                content = content + "\n" + ENDING_CONFIG_YAML
 
             # write to file or stdout
             if file_name:

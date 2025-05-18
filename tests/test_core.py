@@ -54,7 +54,7 @@ def test_create_config_yaml_stdout(detail):
     sys.stdout = mystdout
 
     try:
-        create_config_yaml(detail=detail)
+        create_config_yaml(type="cluster", detail=detail)
         output = mystdout.getvalue()
 
         # Check if output contains some expected YAML content
@@ -84,7 +84,7 @@ def test_create_config_yaml_file():
         with open(temp_path, 'r') as f:
             content = f.read()
             assert "appName:" in content
-            assert "spark." in content
+            assert "master" in content
 
         # Create SparkSession from the config
         spark = create_spark_session(temp_path)
@@ -92,9 +92,6 @@ def test_create_config_yaml_file():
         # Verify the session was created with correct configuration
         assert spark is not None
         assert spark.conf.get("spark.app.name") == "SparkHelperApp"
-        assert spark.conf.get("spark.executor.memory") == "4g"
-        assert spark.conf.get("spark.driver.memory") == "4g"
-        assert spark.conf.get("spark.driver.pythonVersion") == "3.11"
 
         spark.stop()
 
@@ -115,3 +112,10 @@ def test_create_config_yaml_type(type):
             content = yaml.safe_load(f)
             assert content["appName"] == "SparkHelperApp"
             assert content["master"] == type[1]
+
+            if type[0] == "local":
+                assert "spark.driver.memory" not in content.keys()
+            elif type[0] == "cluster":
+                assert "spark.driver.memory" in content.keys()
+                assert "spark.executor.cores" in content.keys()
+                assert "spark.executor.instances" in content.keys()

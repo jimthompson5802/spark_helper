@@ -1,31 +1,19 @@
-# Spark Application Configuration Template
+# Spark Application Configuration Template for Local Spark
 # This template provides common configuration parameters for Spark applications
 
 # User-specific configurations
 # Application information
 appName: "SparkHelperApp"
 
-# Spark Master 
-# Use local[*] for local development
-# for standalone mode, use spark://spark-master:7077
-# for yar
+# Local Spark Master 
+# "local"	Run Spark locally with one worker thread (i.e. no parallelism at all).
+# "local[K]"	Run Spark locally with K worker threads (ideally, set this to the number of cores on your machine).
+# "local[K,F]"	Run Spark locally with K worker threads and F maxFailures (see spark.task.maxFailures for an explanation of this variable).
+# "local[*]"	Run Spark locally with as many worker threads as logical cores on your machine.
+# "local[*,F]"	Run Spark locally with as many worker threads as logical cores on your machine and F maxFailures.
+# "local-cluster[N,C,M]"	Local-cluster mode is only for unit tests. It emulates a distributed cluster in a single JVM with N number of workers, C cores per worker and M MiB of memory per worker.
+
 master: "local[*]"
 
-# deployment mode
-spark.submit.deployMode: "client"  # or "cluster"
-  
-# Spark Driver settings
-spark.driver.memory: "4g" # Memory allocated for the driver
-spark.driver.cores: 2 # Number of cores for the driver
-spark.driver.maxResultSize: "1g" # Maximum size of the result that can be collected to the driver
-spark.driver.pythonVersion: "3.11"  # Python version for PySpark
 
-# Spark Executor settings
-spark.executor.memory: "4g" #
-spark.executor.cores: 2 # Number of cores per executor
-spark.executor.instances: 2 # Number of executors
-spark.executor.pythonVersion: "3.11"  # Python version for PySpark
 
-# additional Spark configuration can be added here
-# Example: Enable Hive support
-# spark.sql.catalogImplementation: "hive"
