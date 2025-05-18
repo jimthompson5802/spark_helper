@@ -54,6 +54,7 @@ ENV/
 env.bak/
 venv.bak/
 
+
 # IDE specific files
 .idea/
 .vscode/
@@ -72,6 +73,7 @@ spark-warehouse/
 # jupyterlab 
 .jupyter
 .local
+.bash_history
 
 # Exceptions
 !src/spark_helper/spark_config_template.yaml
