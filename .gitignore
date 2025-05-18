@@ -80,3 +80,4 @@ spark-warehouse/
 # Exceptions
 !src/spark_helper/spark_config_local_template.yaml
 !src/spark_helper/spark_config_cluster_template.yaml
+!sample_*.yaml
