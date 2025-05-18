@@ -58,6 +58,50 @@ Or use the command-line tool:
 generate-spark-config --file_path my_config.yaml
 ```
 
+#### Default Confguration File
+
+```yaml
+# Spark Application Configuration Template
+# This template provides common configuration parameters for Spark applications
+
+# User-specific configurations
+# Application information
+appName: "SparkHelperApp"
+
+# Spark Master 
+# Use local[*] for local development
+# for standalone mode, use spark://spark-master:7077
+# for yar
+master: "local[*]"
+
+# deployment mode
+spark.submit.deployMode: "client"  # or "cluster"
+  
+# Spark Driver settings
+spark.driver.memory: "4g" # Memory allocated for the driver
+spark.driver.cores: 2 # Number of cores for the driver
+spark.driver.maxResultSize: "1g" # Maximum size of the result that can be collected to the driver
+spark.driver.pythonVersion: "3.11"  # Python version for PySpark
+
+# Spark Executor settings
+spark.executor.memory: "4g" #
+spark.executor.cores: 2 # Number of cores per executor
+spark.executor.instances: 2 # Number of executors
+spark.executor.pythonVersion: "3.11"  # Python version for PySpark
+
+# System related settings
+spark.network.timeout: "300s"  # Network timeout for Spark jobs
+spark.executor.heartbeatInterval: "60s"  # Heartbeat interval for executors
+spark.broadcast.compress: "true"  # Enable compression for broadcast variables
+spark.sql.adaptive.enabled: "true"  # Enable adaptive query execution
+  
+# additional Spark configuration can be added here
+# Example: Enable Hive support
+# spark.sql.catalogImplementation: "hive"
+```
+
+The user is now able to modify the configuration file to suit their needs. Using the function `create_spark_session()` the user starts a SparkSession passing in the configuration file with the desired settings
+
 ### Example Script
 
 The package includes an example script that demonstrates how to use the package:
