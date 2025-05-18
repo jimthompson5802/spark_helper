@@ -36,6 +36,11 @@ def main():
         for item in sorted(spark.sparkContext.getConf().getAll()):
             print(f"  {item[0]}: {item[1]}")
 
+        # do some operations
+        rdd = spark.sparkContext.parallelize(range(10))
+
+        print(rdd.map(lambda x: x*x).collect())
+
         # Stop the session
         spark.stop()
     except Exception as e:
