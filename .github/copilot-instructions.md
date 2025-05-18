@@ -8,7 +8,8 @@ This workspace contains a Python package for working with Apache Spark. The pack
 
 - `src/spark_helper/`: Contains the main package code
   - `core.py`: Core functionality for working with Spark
-  - `cli.py`: Command-line interface
+  - `generate_config.py`: Command-line interface to generate configuration files
+  - `spark_config_*_template.yaml`: Configuration templates for different Spark clusters types
 - `tests/`: Contains test files
 - `docs/`: Documentation
 
@@ -16,7 +17,7 @@ This workspace contains a Python package for working with Apache Spark. The pack
 
 - Follow PEP 8 guidelines
 - Use type hints for all function parameters and return values
-- Maximum line length is 100 characters (Black formatter's default)
+- Maximum line length is 120 characters (Black formatter's default)
 - Use docstrings for all public functions, classes, and methods
 - Write comprehensive tests for all functionality
 
