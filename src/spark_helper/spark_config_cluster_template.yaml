@@ -6,7 +6,6 @@
 appName: "SparkHelperApp"
 
 # Spark Master 
-# Use local[*] for local development
 # for standalone mode, use spark://spark-master:7077
 # for yarn mode, use yarn
 master: "spark://spark-master:7077" 
