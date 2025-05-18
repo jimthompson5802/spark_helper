@@ -53,21 +53,21 @@ def main():
             "spark.driver.memory": "1g",
             "spark.sql.shuffle.partitions": "8",
         }
-        
+
         spark_from_dict = create_spark_session(config_dict)
         app_name = spark_from_dict.conf.get('spark.app.name')
         print(f"Successfully created SparkSession with app name: {app_name}")
         print(f"Spark version: {spark_from_dict.version}")
-        
+
         # Show configured settings
         print("\nActive Spark configuration (from dictionary):")
         for item in sorted(spark_from_dict.sparkContext.getConf().getAll()):
             print(f"  {item[0]}: {item[1]}")
-            
+
         # do some operations
         rdd = spark_from_dict.sparkContext.parallelize(range(5, 15))
         print("Sample operation result:", rdd.map(lambda x: x*2).collect())
-        
+
         # Stop the session
         spark_from_dict.stop()
     except Exception as e:
