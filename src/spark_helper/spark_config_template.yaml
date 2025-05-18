@@ -1,6 +1,7 @@
 # Spark Application Configuration Template
 # This template provides common configuration parameters for Spark applications
 
+# User-specific configurations
 # Application information
 appName: "SparkHelperApp"
 
@@ -14,14 +15,23 @@ master: "local[*]"
 spark.submit.deployMode: "client"  # or "cluster"
   
 # Spark Driver settings
-spark.driver.memory: "4g"
-spark.driver.cores: 2
-spark.driver.instances: 1
+spark.driver.memory: "4g" # Memory allocated for the driver
+spark.driver.cores: 2 # Number of cores for the driver
+spark.driver.maxResultSize: "1g" # Maximum size of the result that can be collected to the driver
 spark.driver.pythonVersion: "3.11"  # Python version for PySpark
 
 # Spark Executor settings
-spark.executor.memory: "4g"
-spark.executor.cores: 2
-spark.executor.instances: 2
+spark.executor.memory: "4g" #
+spark.executor.cores: 2 # Number of cores per executor
+spark.executor.instances: 2 # Number of executors
 spark.executor.pythonVersion: "3.11"  # Python version for PySpark
+
+# System related settings
+spark.network.timeout: "300s"  # Network timeout for Spark jobs
+spark.executor.heartbeatInterval: "60s"  # Heartbeat interval for executors
+spark.broadcast.compress: "true"  # Enable compression for broadcast variables
+spark.sql.adaptive.enabled: "true"  # Enable adaptive query execution
   
+# additional Spark configuration can be added here
+# Example: Enable Hive support
+# spark.sql.catalogImplementation: "hive"
