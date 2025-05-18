@@ -30,51 +30,6 @@ pip install -e .
 pip install -e ".[dev]"
 ```
 
-## Standalone Spark Cluster
-
-To bring up the environment, run the following command:
-
-```bash
-docker-compose up -d
-```
-This command will start the Spark cluster and Jupyterlab server in detached mode. The Jupyterlab server will be accessible at `http://localhost:8888` in your web browser.  Expected output:
-
-```bash
-Mac:jim spark_sandbox[504]$ docker compose up -d
-[+] Running 7/7
- ✔ Network spark_sandbox_spark-network  Created                          0.0s 
- ✔ Container spark-master               Started                          0.1s 
- ✔ Container spark-worker-2             Started                          0.3s 
- ✔ Container spark-worker-4             Started                          0.2s 
- ✔ Container jupyterlab                 Started                          0.2s 
- ✔ Container spark-worker-3             Started                          0.2s 
- ✔ Container spark-worker-1             Started                          0.2s
-```
-
-
-Connecting to the Juypterlab server via the web browser or from Visual Studio code use the following URL: `http://localhost:8888`. For ease of testing, the Jupyterlab server is configured to allow access without a password or token. However, in a production environment, it is recommended to set up authentication and secure access to the Jupyterlab server.
-
-Once a Spark Applicaiton is running, the application UI will be accessible at `http://localhost:4040`. You can monitor the Spark cluster's status and job progress through this interface.
-
-To stop the environment, run:
-
-```bash
-docker-compose down
-```
-This command will stop and remove the containers, networks, and volumes defined in the `docker-compose.yml` file.  The expected output is:
-
-```bash
-+] Running 7/7
- ✔ Container spark-worker-2             Removed                         10.3s 
- ✔ Container spark-worker-4             Removed                         10.4s 
- ✔ Container jupyterlab                 Removed                          0.3s 
- ✔ Container spark-worker-3             Removed                         10.2s 
- ✔ Container spark-worker-1             Removed                         10.2s 
- ✔ Container spark-master               Removed                         10.2s 
- ✔ Network spark_sandbox_spark-network  Removed                          0.2s 
-Mac:jim spark_sandbox[506]$ 
-```
-
 ## Usage
 
 ### Configuration File Support
@@ -192,6 +147,53 @@ flake8 src tests
 # Check types
 mypy src
 ```
+
+### Standalone Spark Cluster
+
+To bring up the environment, run the following command:
+
+```bash
+docker-compose up -d
+```
+This command will start the Spark cluster and Jupyterlab server in detached mode. The Jupyterlab server will be accessible at `http://localhost:8888` in your web browser.  Expected output:
+
+```bash
+Mac:jim spark_sandbox[504]$ docker compose up -d
+[+] Running 7/7
+ ✔ Network spark_sandbox_spark-network  Created                          0.0s 
+ ✔ Container spark-master               Started                          0.1s 
+ ✔ Container spark-worker-2             Started                          0.3s 
+ ✔ Container spark-worker-4             Started                          0.2s 
+ ✔ Container jupyterlab                 Started                          0.2s 
+ ✔ Container spark-worker-3             Started                          0.2s 
+ ✔ Container spark-worker-1             Started                          0.2s
+```
+
+
+Connecting to the Juypterlab server via the web browser or from Visual Studio code use the following URL: `http://localhost:8888`. For ease of testing, the Jupyterlab server is configured to allow access without a password or token. However, in a production environment, it is recommended to set up authentication and secure access to the Jupyterlab server.
+
+Once a Spark Applicaiton is running, the application UI will be accessible at `http://localhost:4040`. You can monitor the Spark cluster's status and job progress through this interface.
+
+To stop the environment, run:
+
+```bash
+docker-compose down
+```
+This command will stop and remove the containers, networks, and volumes defined in the `docker-compose.yml` file.  The expected output is:
+
+```bash
++] Running 7/7
+ ✔ Container spark-worker-2             Removed                         10.3s 
+ ✔ Container spark-worker-4             Removed                         10.4s 
+ ✔ Container jupyterlab                 Removed                          0.3s 
+ ✔ Container spark-worker-3             Removed                         10.2s 
+ ✔ Container spark-worker-1             Removed                         10.2s 
+ ✔ Container spark-master               Removed                         10.2s 
+ ✔ Network spark_sandbox_spark-network  Removed                          0.2s 
+Mac:jim spark_sandbox[506]$ 
+```
+
+
 
 ## Documentation
 
