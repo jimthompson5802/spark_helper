@@ -71,7 +71,7 @@ def test_create_config_yaml_file():
     with NamedTemporaryFile(suffix=".yaml") as temp_file:
         temp_path = temp_file.name
 
-        create_config_yaml(temp_path)
+        create_config_yaml(type="local", file_name=temp_path)
 
         # Check if the file was created and contains expected content
         assert os.path.exists(temp_path)
@@ -92,3 +92,21 @@ def test_create_config_yaml_file():
         assert spark.conf.get("spark.driver.pythonVersion") == "3.11"
 
         spark.stop()
+
+
+@pytest.mark.parametrize("type", [("local", "local[*]"), ("cluster", "spark://spark-master:7077")])
+def test_create_config_yaml_type(type):
+    """Test that create_config_yaml handles different types correctly."""
+    with NamedTemporaryFile(suffix=".yaml") as temp_file:
+        temp_path = temp_file.name
+
+        create_config_yaml(type=type[0], file_name=temp_path)
+
+        # Check if the file was created and contains expected content
+        assert os.path.exists(temp_path)
+
+        # load the YAML file
+        with open(temp_path, 'r') as f:
+            content = yaml.safe_load(f)
+            assert content["appName"] == "SparkHelperApp"
+            assert content["master"] == type[1]

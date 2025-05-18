@@ -78,4 +78,5 @@ spark-warehouse/
 .ipython
 
 # Exceptions
-!src/spark_helper/spark_config_template.yaml
+!src/spark_helper/spark_config_local_template.yaml
+!src/spark_helper/spark_config_cluster_template.yaml

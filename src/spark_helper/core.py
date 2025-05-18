@@ -10,6 +10,16 @@ import yaml
 from pyspark.sql import SparkSession
 
 
+# these are system-level default configurations
+# that can be overridden by user-defined configurations
+SYSTEM_LEVEL_CONFIG = {
+    "spark.network.timeout": "300s",
+    "spark.executor.heartbeatInterval": "60s",
+    "spark.broadcast.compress": "true",
+    "spark.sql.adaptive.enabled": "true",
+}
+
+
 def create_spark_session(config_path: str) -> SparkSession:
     """
     Create a SparkSession based on configuration from a YAML file.
@@ -51,6 +61,13 @@ def create_spark_session(config_path: str) -> SparkSession:
     master = config.pop("master", "local[*]")
     builder = builder.master(master)
 
+    # Set system-level configurations
+    for key, value in SYSTEM_LEVEL_CONFIG.items():
+        # check if the key is already in the config, i.e., user-defined config
+        # takes precedence over system-level config
+        if key not in config:
+            config[key] = value
+
     # Set other configurations
     builder = builder.config(map=config)
 
@@ -58,7 +75,7 @@ def create_spark_session(config_path: str) -> SparkSession:
     return builder.getOrCreate()
 
 
-def create_config_yaml(file_name: Optional[str] = None) -> None:
+def create_config_yaml(type: str = "local", file_name: Optional[str] = None) -> None:
     """
     Generates a spark configuration YAML and write its contents to file_name or stdout.
 
@@ -77,7 +94,7 @@ def create_config_yaml(file_name: Optional[str] = None) -> None:
     """
     try:
         package = importlib.import_module("spark_helper")
-        resource_name = "spark_config_template.yaml"
+        resource_name = f"spark_config_{type}_template.yaml"
 
         resource = importlib.resources.files(package).joinpath(resource_name)
         if not resource.is_file():
