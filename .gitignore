@@ -74,6 +74,8 @@ spark-warehouse/
 .jupyter
 .local
 .bash_history
+.ipynb_checkpoints
+.ipython
 
 # Exceptions
 !src/spark_helper/spark_config_template.yaml
