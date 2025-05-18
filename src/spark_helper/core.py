@@ -6,41 +6,44 @@ import importlib.resources
 import os
 import sys
 import yaml
+from textwrap import dedent
 
 from pyspark.sql import SparkSession
 
 
 # these are system-level default configurations
 # that can be overridden by user-defined configurations
-SYSTEM_LEVEL_CONFIG = {
-    "spark.network.timeout": "300s",
-    "spark.executor.heartbeatInterval": "60s",
-    "spark.broadcast.compress": "true",
-    "spark.sql.adaptive.enabled": "true",
-}
+SYSTEM_LEVEL_CONFIG_YAML = dedent("""
+    # System related settings
+    spark.network.timeout: "300s"  # Network timeout for Spark jobs
+    spark.executor.heartbeatInterval: "60s"  # Heartbeat interval for executors
+    spark.broadcast.compress: "true"  # Enable compression for broadcast variables
+    spark.sql.adaptive.enabled: "true"  # Enable adaptive query execution
+""")
 
 
 def create_spark_session(config_path: str) -> SparkSession:
     """
-    Create a SparkSession based on configuration from a YAML file.
+    Create a SparkSession using configuration from a YAML file.
 
-    This function reads a YAML configuration file and uses it to configure and create a
-    SparkSession. The YAML file should contain Spark configuration parameters as shown in the
-    template.
+    Loads Spark configuration from the specified YAML file, applies user-defined and system-level
+    settings, and returns a configured SparkSession. User-defined settings in the YAML file take
+    precedence over system-level defaults.
 
     Args:
-        config_path: Path to the YAML configuration file
+        config_path (str): Path to the YAML configuration file.
 
     Returns:
-        SparkSession: Configured Spark session
+        SparkSession: A configured SparkSession instance.
 
     Raises:
-        FileNotFoundError: If the config file doesn't exist
-        ValueError: If the config file is invalid or missing required fields
+        FileNotFoundError: If the configuration file does not exist.
+        ValueError: If the YAML configuration cannot be parsed.
 
     Examples:
         >>> spark = create_spark_session("config.yaml")
     """
+
     # Check if file exists
     if not os.path.isfile(config_path):
         raise FileNotFoundError(f"Configuration file not found: {config_path}")
@@ -62,7 +65,8 @@ def create_spark_session(config_path: str) -> SparkSession:
     builder = builder.master(master)
 
     # Set system-level configurations
-    for key, value in SYSTEM_LEVEL_CONFIG.items():
+    system_level_config = yaml.safe_load(SYSTEM_LEVEL_CONFIG_YAML)
+    for key, value in system_level_config.items():
         # check if the key is already in the config, i.e., user-defined config
         # takes precedence over system-level config
         if key not in config:
@@ -75,23 +79,29 @@ def create_spark_session(config_path: str) -> SparkSession:
     return builder.getOrCreate()
 
 
-def create_config_yaml(type: str = "local", file_name: Optional[str] = None) -> None:
+def create_config_yaml(type: str = "local", detail: str = "user", file_name: Optional[str] = None) -> None:
     """
-    Generates a spark configuration YAML and write its contents to file_name or stdout.
+    Creates a Spark configuration YAML file from a template resource.
 
-    If file_name is None, output goes to stdout.
+    This function loads a YAML template resource from the 'spark_helper' package, optionally appends system-level
+    configuration, and writes the result to a specified file or outputs it to stdout.
 
     Args:
-        file_name: Optional; the name of the generated config file.
+        type (str, optional): The type of Spark configuration template to use (e.g., "local"). Defaults to "local".
+        detail (str, optional): The level of detail to include in the configuration ("user" or "all"). If "all",
+            appends system-level config. Defaults to "user".
+        file_name (Optional[str], optional): The path to the output file. If None, outputs to stdout. Defaults to None.
 
     Raises:
-        FileNotFoundError: If the specified file cannot be found in the package
-        ImportError: If the specified package cannot be imported
+        ImportError: If the 'spark_helper' package cannot be imported.
+        FileNotFoundError: If the specified template resource is not found in the package.
+        RuntimeError: If any other error occurs while accessing or writing the resource.
 
     Examples:
-        >>> create_config_yaml()
-        >>> create_config_yaml("custom_config.yaml")
+        >>> create_config_yaml(type="local", detail="user", file_name="config.yaml")
+        >>> create_config_yaml(type="local", detail="all")
     """
+
     try:
         package = importlib.import_module("spark_helper")
         resource_name = f"spark_config_{type}_template.yaml"
@@ -101,6 +111,8 @@ def create_config_yaml(type: str = "local", file_name: Optional[str] = None) -> 
             raise FileNotFoundError(f"Resource '{resource_name}' not found in package 'spark_helper'")
         with resource.open("r", encoding="utf-8") as f:
             content = f.read()
+            if detail == "all":
+                content = content + "\n" + SYSTEM_LEVEL_CONFIG_YAML
             if file_name:
                 with open(file_name, "w", encoding="utf-8") as out_file:
                     out_file.write(content)

@@ -45,7 +45,8 @@ def test_create_spark_session_file_not_found():
         create_spark_session("nonexistent_config.yaml")
 
 
-def test_create_config_yaml_stdout():
+@pytest.mark.parametrize("detail", ["user", "all"])
+def test_create_config_yaml_stdout(detail):
     """Test that create_config_yaml writes to stdout when no file name is provided."""
     # Redirect stdout to capture the output
     old_stdout = sys.stdout
@@ -53,7 +54,7 @@ def test_create_config_yaml_stdout():
     sys.stdout = mystdout
 
     try:
-        create_config_yaml()
+        create_config_yaml(detail=detail)
         output = mystdout.getvalue()
 
         # Check if output contains some expected YAML content
@@ -61,6 +62,10 @@ def test_create_config_yaml_stdout():
         assert "SparkHelperApp" in output
         assert "spark.driver.memory" in output
         assert "spark.executor.cores" in output
+        if detail == "all":
+            assert "spark.network.timeout" in output
+        else:
+            assert "spark.network.timeout" not in output
     finally:
         # Restore stdout
         sys.stdout = old_stdout
