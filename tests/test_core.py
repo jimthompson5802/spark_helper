@@ -30,7 +30,7 @@ def test_create_spark_session():
 
         # Verify the session was created with correct configuration
         assert spark is not None
-        assert spark.conf.get("spark.app.name") == "TestYamlSession"
+        assert spark.conf.get("appName") == "TestYamlSession"
         assert spark.conf.get("spark.executor.memory") == "3g"
         assert spark.conf.get("spark.driver.memory") == "2g"
         assert spark.conf.get("spark.sql.shuffle.partitions") == "10"
@@ -85,7 +85,7 @@ def test_create_config_yaml_file():
 
         # Verify the session was created with correct configuration
         assert spark is not None
-        assert spark.conf.get("spark.app.name") == "SparkHelperApp"
+        assert spark.conf.get("appName") == "SparkHelperApp"
         assert spark.conf.get("spark.executor.memory") == "4g"
         assert spark.conf.get("spark.driver.memory") == "4g"
         assert spark.conf.get("spark.driver.pythonVersion") == "3.11"
