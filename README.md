@@ -1,6 +1,6 @@
 # Spark Helper
 
-A Python package to simplify working with Apache Spark by providing utilities for SparkSession creation and configuration management.
+A Python package to simplify working with Apache Spark by providing utilities to generate user modifiable Spark configuration parameters and SparkSession creation.
 
 ## Features
 
