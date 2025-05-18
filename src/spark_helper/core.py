@@ -42,30 +42,8 @@ def create_spark_session(config_path: str) -> SparkSession:
     except Exception as e:
         raise ValueError(f"Failed to parse YAML configuration: {str(e)}")
 
-    # Start building SparkSession
-    builder = SparkSession.builder
-
-    # Set app name if provided
-    app_name = config.get("appName", "SparkApplication")
-    builder = builder.appName(app_name)
-
-    # Set master if provided
-    master = config.get("master")
-    if master:
-        builder = builder.master(master)
-
-    # Apply all other Spark configurations
-    for key, value in config.items():
-        # Skip non-configuration keys that we handle separately
-        if key in ["appName", "master"]:
-            continue
-
-        # Check if it's a direct spark configuration (starts with 'spark.')
-        if isinstance(key, str) and key.startswith("spark."):
-            builder = builder.config(key, value)
-
     # Create and return the SparkSession
-    return builder.getOrCreate()
+    return SparkSession.builder.config(map=config).getOrCreate()
 
 
 def create_config_yaml(file_name: Optional[str] = None) -> None:
