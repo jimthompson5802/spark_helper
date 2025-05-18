@@ -41,7 +41,7 @@ def create_spark_session(config_path: str) -> SparkSession:
             config = yaml.safe_load(f)
     except Exception as e:
         raise ValueError(f"Failed to parse YAML configuration: {str(e)}")
-    
+
     builder = SparkSession.builder
 
     # App name and master
