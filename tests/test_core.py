@@ -10,7 +10,7 @@ from io import StringIO
 from spark_helper.core import create_spark_session, create_config_yaml
 
 
-def test_create_spark_session():
+def test_create_spark_session_from_file():
     """Test creating a SparkSession from a YAML config file."""
     # Create a temporary config file
     config = {
@@ -25,7 +25,7 @@ def test_create_spark_session():
         yaml.dump(config, temp_file)
         temp_path = temp_file.name
 
-        # Create SparkSession from the config
+        # Create SparkSession from the config file
         spark = create_spark_session(temp_path)
 
         # Verify the session was created with correct configuration
@@ -39,10 +39,41 @@ def test_create_spark_session():
         spark.stop()
 
 
+def test_create_spark_session_from_dict():
+    """Test creating a SparkSession from a dictionary config."""
+    # Create a config dictionary
+    config = {
+        "appName": "TestDictSession",
+        "master": "local[*]",
+        "spark.executor.memory": "4g",
+        "spark.driver.memory": "2g",
+        "spark.sql.shuffle.partitions": "12",
+    }
+
+    # Create SparkSession directly from the config dictionary
+    spark = create_spark_session(config)
+
+    # Verify the session was created with correct configuration
+    assert spark is not None
+    assert spark.conf.get("spark.app.name") == "TestDictSession"
+    assert spark.conf.get("spark.master") == "local[*]"
+    assert spark.conf.get("spark.executor.memory") == "4g"
+    assert spark.conf.get("spark.driver.memory") == "2g"
+    assert spark.conf.get("spark.sql.shuffle.partitions") == "12"
+
+    spark.stop()
+
+
 def test_create_spark_session_file_not_found():
     """Test that create_spark_session raises the correct exception for missing files."""
     with pytest.raises(FileNotFoundError):
         create_spark_session("nonexistent_config.yaml")
+
+
+def test_create_spark_session_invalid_type():
+    """Test that create_spark_session raises the correct exception for invalid input type."""
+    with pytest.raises(TypeError):
+        create_spark_session(123)  # Not a string or dictionary
 
 
 @pytest.mark.parametrize("detail", ["user", "all"])
@@ -81,7 +112,7 @@ def test_create_config_yaml_file():
         # Check if the file was created and contains expected content
         assert os.path.exists(temp_path)
 
-        with open(temp_path, 'r') as f:
+        with open(temp_path, "r") as f:
             content = f.read()
             assert "appName:" in content
             assert "master" in content
@@ -108,7 +139,7 @@ def test_create_config_yaml_type(type):
         assert os.path.exists(temp_path)
 
         # load the YAML file
-        with open(temp_path, 'r') as f:
+        with open(temp_path, "r") as f:
             content = yaml.safe_load(f)
             assert content["appName"] == "SparkHelperApp"
             assert content["master"] == type[1]

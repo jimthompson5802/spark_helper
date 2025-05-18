@@ -49,13 +49,42 @@ spark.executor.cores: 2
 
 ### Step 3: Create a SparkSession
 
+You can create a SparkSession in two ways:
+
+#### Option 1: From a configuration file
+
 Use the configuration file to create a SparkSession:
 
 ```python
 from spark_helper.core import create_spark_session
 
-# Create a SparkSession using the config
+# Create a SparkSession using the config file
 spark = create_spark_session("my_spark_config.yaml")
+
+# Use the SparkSession
+df = spark.read.csv("path/to/data.csv", header=True)
+df.show()
+
+# Stop the session when done
+spark.stop()
+```
+
+#### Option 2: From a configuration dictionary
+
+Create a SparkSession directly from a configuration dictionary:
+
+```python
+from spark_helper.core import create_spark_session
+
+# Create a SparkSession using a dictionary
+config = {
+    "appName": "MySparkApplication",
+    "master": "local[4]",
+    "spark.driver.memory": "8g",
+    "spark.executor.memory": "6g",
+    "spark.executor.cores": 2
+}
+spark = create_spark_session(config)
 
 # Use the SparkSession
 df = spark.read.csv("path/to/data.csv", header=True)

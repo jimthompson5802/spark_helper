@@ -32,15 +32,32 @@ pip install -e ".[dev]"
 
 ## Usage
 
-### Configuration File Support
+### Creating SparkSession
 
-Create a SparkSession using a YAML configuration file:
+You can create a SparkSession in two ways:
+
+1. From a YAML configuration file:
 
 ```python
 from spark_helper.core import create_spark_session
 
-# Create a SparkSession from a YAML configuration
+# Create a SparkSession from a YAML configuration file
 spark = create_spark_session("config.yaml")
+```
+
+2. Directly from a configuration dictionary:
+
+```python
+from spark_helper.core import create_spark_session
+
+# Create a SparkSession from a dictionary
+config = {
+    "appName": "MySparkApp",
+    "master": "local[*]",
+    "spark.executor.memory": "2g",
+    "spark.driver.memory": "1g"
+}
+spark = create_spark_session(config)
 ```
 
 Generate a template configuration file:

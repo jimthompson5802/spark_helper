@@ -6,23 +6,32 @@ The core module provides functions for creating and configuring SparkSessions.
 
 ### Functions
 
-#### `create_spark_session(config_path: str) -> SparkSession`
+#### `create_spark_session(config: Union[str, Dict[str, Any]]) -> SparkSession`
 
-Creates a SparkSession based on configuration from a YAML file.
+Creates a SparkSession based on configuration from either a YAML file or a configuration dictionary.
 
 **Parameters:**
-- `config_path` (str): Path to the YAML configuration file
+- `config` (Union[str, Dict[str, Any]]): Path to the YAML configuration file or a dictionary of configuration parameters
 
 **Returns:**
 - `SparkSession`: Configured Spark session
 
 **Raises:**
-- `FileNotFoundError`: If the config file doesn't exist
-- `ValueError`: If the config file is invalid or missing required fields
+- `FileNotFoundError`: If a config file path is provided but doesn't exist
+- `ValueError`: If a config file path is provided but the file is invalid
+- `TypeError`: If the config is neither a string nor a dictionary
 
-**Example:**
+**Examples:**
 ```python
+# From a YAML file
 spark = create_spark_session("config.yaml")
+
+# From a dictionary
+spark = create_spark_session({
+    "appName": "MySparkApp",
+    "master": "local[*]",
+    "spark.executor.memory": "2g"
+})
 ```
 
 #### `create_config_yaml(file_name: Optional[str] = None) -> None`

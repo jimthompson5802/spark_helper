@@ -1,6 +1,6 @@
 """Core functionality for the spark_helper package."""
 
-from typing import Optional
+from typing import Optional, Dict, Union, Any
 import importlib
 import importlib.resources
 import os
@@ -13,73 +13,87 @@ from pyspark.sql import SparkSession
 
 # these are system-level default configurations
 # that can be overridden by user-defined configurations
-SYSTEM_LEVEL_CONFIG_YAML = dedent("""
+SYSTEM_LEVEL_CONFIG_YAML = dedent(
+    """
     # System related settings
     spark.network.timeout: "300s"  # Network timeout for Spark jobs
     spark.executor.heartbeatInterval: "60s"  # Heartbeat interval for executors
     spark.broadcast.compress: "true"  # Enable compression for broadcast variables
     spark.sql.adaptive.enabled: "true"  # Enable adaptive query execution
-""")
+"""
+)
 
-ENDING_CONFIG_YAML = dedent("""
+ENDING_CONFIG_YAML = dedent(
+    """
     # additional Spark configuration can be added here
     # Example: Enable Hive support
     # spark.sql.catalogImplementation: "hive"
-""")
+"""
+)
 
 
-def create_spark_session(config_path: str) -> SparkSession:
+def create_spark_session(config: Union[str, Dict[str, Any]]) -> SparkSession:
     """
-    Create a SparkSession using configuration from a YAML file.
+    Create a SparkSession using configuration from a YAML file or a dictionary.
 
-    Loads Spark configuration from the specified YAML file, applies user-defined and system-level
-    settings, and returns a configured SparkSession. User-defined settings in the YAML file take
-    precedence over system-level defaults.
+    Loads Spark configuration from the specified YAML file or uses the provided dictionary,
+    applies user-defined and system-level settings, and returns a configured SparkSession.
+    User-defined settings take precedence over system-level defaults.
 
     Args:
-        config_path (str): Path to the YAML configuration file.
+        config (Union[str, Dict[str, Any]]): Path to the YAML configuration file or a dictionary
+            with configuration parameters.
 
     Returns:
         SparkSession: A configured SparkSession instance.
 
     Raises:
-        FileNotFoundError: If the configuration file does not exist.
-        ValueError: If the YAML configuration cannot be parsed.
+        FileNotFoundError: If the configuration file does not exist when config is a string.
+        ValueError: If the YAML configuration cannot be parsed when config is a string.
+        TypeError: If the config is neither a string nor a dictionary.
 
     Examples:
         >>> spark = create_spark_session("config.yaml")
+        >>> spark = create_spark_session({"appName": "MyApp", "master": "local[*]"})
     """
 
-    # Check if file exists
-    if not os.path.isfile(config_path):
-        raise FileNotFoundError(f"Configuration file not found: {config_path}")
+    # Process the configuration parameter
+    if isinstance(config, str):
+        # Check if file exists
+        if not os.path.isfile(config):
+            raise FileNotFoundError(f"Configuration file not found: {config}")
 
-    # Read the YAML file
-    try:
-        with open(config_path, "r") as f:
-            config = yaml.safe_load(f)
-    except Exception as e:
-        raise ValueError(f"Failed to parse YAML configuration: {str(e)}")
+        # Read the YAML file
+        try:
+            with open(config, "r") as f:
+                config_dict = yaml.safe_load(f)
+        except Exception as e:
+            raise ValueError(f"Failed to parse YAML configuration: {str(e)}")
+    elif isinstance(config, dict):
+        # Use the dictionary directly
+        config_dict = config.copy()
+    else:
+        raise TypeError(f"Expected str or dict, got {type(config).__name__}")
 
     builder = SparkSession.builder
 
     # App name and master
-    app_name = config.pop("appName", "DefaultSparkApp")
+    app_name = config_dict.pop("appName", "DefaultSparkApp")
     builder = builder.appName(app_name)
 
-    master = config.pop("master", "local[*]")
+    master = config_dict.pop("master", "local[*]")
     builder = builder.master(master)
 
     # Set system-level configurations
     system_level_config = yaml.safe_load(SYSTEM_LEVEL_CONFIG_YAML)
     for key, value in system_level_config.items():
-        # check if the key is already in the config, i.e., user-defined config
+        # Check if the key is already in the config_dict, i.e., user-defined config
         # takes precedence over system-level config
-        if key not in config:
-            config[key] = value
+        if key not in config_dict:
+            config_dict[key] = value
 
     # Set other configurations
-    builder = builder.config(map=config)
+    builder = builder.config(map=config_dict)
 
     # Create and return the SparkSession
     return builder.getOrCreate()
