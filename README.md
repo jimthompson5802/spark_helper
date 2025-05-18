@@ -5,8 +5,9 @@ A Python package to simplify working with Apache Spark by providing utilities fo
 ## Features
 
 - Simple SparkSession creation from YAML configuration files
-- Generate template YAML configuration files for Spark applications
-- Command-line interface for generating Spark configurations
+- Generate template YAML configuration files for different Spark deployment types (local, cluster)
+- Command-line interface for generating Spark configurations with customizable detail levels
+- System-level default configurations that can be overridden by user settings
 - Type hints and comprehensive documentation throughout
 
 ## Installation
@@ -92,15 +93,24 @@ Generate a template configuration file:
 ```python
 from spark_helper.core import create_config_yaml
 
-# Generate and save a template configuration
-create_config_yaml("my_config.yaml")
+# Generate a local Spark configuration template and save it to a file
+create_config_yaml(type="local", detail="user", file_name="my_config.yaml")
+
+# Generate a cluster configuration with all settings (including system level)
+create_config_yaml(type="cluster", detail="all", file_name="cluster_config.yaml")
+
+# Print a configuration template to stdout
+create_config_yaml(type="local")
 ```
 
 Or use the command-line tool:
 
 ```bash
-# Generate a config file
-generate-spark-config --file_path my_config.yaml
+# Generate a local config file
+generate-spark-config --type local --file_path my_config.yaml
+
+# Generate a cluster config with all details
+generate-spark-config --type cluster --detail all --file_path cluster_config.yaml
 ```
 
 #### Default Confguration File
