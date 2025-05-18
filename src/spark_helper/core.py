@@ -117,7 +117,7 @@ def create_config_yaml(type: str = "local", detail: str = "user", file_name: Opt
         # Check if the resource exists
         if not resource.is_file():
             raise FileNotFoundError(f"Resource '{resource_name}' not found in package 'spark_helper'")
-        
+
         # read the spark config template
         with resource.open("r", encoding="utf-8") as f:
             content = f.read()

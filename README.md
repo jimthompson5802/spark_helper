@@ -61,6 +61,23 @@ create_config_yaml(type="local")
 Or use the command-line tool:
 
 ```bash
+generate-spark-config --help
+usage: generate-spark-config [-h] [--type TYPE] [--detail DETAIL] [--config CONFIG] [--file_path FILE_PATH]
+
+Spark Configuration Generator
+
+options:
+  -h, --help            show this help message and exit
+  --type TYPE           Type of Spark session to create (default: local), valid options: local, cluster
+  --detail DETAIL       Detail level of the configuration (default: user), valid options: user, all
+  --config CONFIG       Configuration type (default: default), valid options: default, custom
+  --file_path FILE_PATH
+                        Optional file path for configuration (default: None)
+```
+
+**Example command-line usage:**
+
+```bash
 # Generate a local config file
 generate-spark-config --type local --file_path my_config.yaml
 
