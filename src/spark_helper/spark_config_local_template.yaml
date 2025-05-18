@@ -25,8 +25,3 @@ spark.executor.memory: "4g" #
 spark.executor.cores: 2 # Number of cores per executor
 spark.executor.instances: 2 # Number of executors
 spark.executor.pythonVersion: "3.11"  # Python version for PySpark
-
-  
-# additional Spark configuration can be added here
-# Example: Enable Hive support
-# spark.sql.catalogImplementation: "hive"

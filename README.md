@@ -68,10 +68,16 @@ generate-spark-config --type local --file_path my_config.yaml
 generate-spark-config --type cluster --detail all --file_path cluster_config.yaml
 ```
 
-#### Default Confguration File
+#### Sample Configuration Files
+
+**Local Spark Configuration**
+
+```bash
+generate-spark-config
+```
 
 ```yaml
-# Spark Application Configuration Template
+# Spark Application Configuration Template for Local Spark
 # This template provides common configuration parameters for Spark applications
 
 # User-specific configurations
@@ -99,12 +105,55 @@ spark.executor.cores: 2 # Number of cores per executor
 spark.executor.instances: 2 # Number of executors
 spark.executor.pythonVersion: "3.11"  # Python version for PySpark
 
+
+# additional Spark configuration can be added here
+# Example: Enable Hive support
+# spark.sql.catalogImplementation: "hive"
+```
+
+**Standalone Cluster Configuration with full details**
+
+```bash
+generate-spark-config --type cluster --detail all
+```
+
+```yaml
+# Spark Application Configuration Template for Standalone Cluster
+# This template provides common configuration parameters for Spark applications
+
+# User-specific configurations
+# Application information
+appName: "SparkHelperApp"
+
+# Spark Master 
+# Use local[*] for local development
+# for standalone mode, use spark://spark-master:7077
+# for yar
+master: "spark://spark-master:7077" 
+
+# deployment mode
+spark.submit.deployMode: "client"  # or "cluster"
+  
+# Spark Driver settings
+spark.driver.memory: "4g" # Memory allocated for the driver
+spark.driver.cores: 2 # Number of cores for the driver
+spark.driver.maxResultSize: "1g" # Maximum size of the result that can be collected to the driver
+spark.driver.pythonVersion: "3.11"  # Python version for PySpark
+
+# Spark Executor settings
+spark.executor.memory: "4g" #
+spark.executor.cores: 2 # Number of cores per executor
+spark.executor.instances: 2 # Number of executors
+spark.executor.pythonVersion: "3.11"  # Python version for PySpark
+
+
 # System related settings
 spark.network.timeout: "300s"  # Network timeout for Spark jobs
 spark.executor.heartbeatInterval: "60s"  # Heartbeat interval for executors
 spark.broadcast.compress: "true"  # Enable compression for broadcast variables
 spark.sql.adaptive.enabled: "true"  # Enable adaptive query execution
-  
+
+
 # additional Spark configuration can be added here
 # Example: Enable Hive support
 # spark.sql.catalogImplementation: "hive"

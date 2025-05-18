@@ -21,6 +21,12 @@ SYSTEM_LEVEL_CONFIG_YAML = dedent("""
     spark.sql.adaptive.enabled: "true"  # Enable adaptive query execution
 """)
 
+ENDING_CONFIG_YAML = dedent("""
+    # additional Spark configuration can be added here
+    # Example: Enable Hive support
+    # spark.sql.catalogImplementation: "hive"
+""")
+
 
 def create_spark_session(config_path: str) -> SparkSession:
     """
@@ -103,21 +109,33 @@ def create_config_yaml(type: str = "local", detail: str = "user", file_name: Opt
     """
 
     try:
+        # Import the package and spark config template
         package = importlib.import_module("spark_helper")
         resource_name = f"spark_config_{type}_template.yaml"
-
         resource = importlib.resources.files(package).joinpath(resource_name)
+
+        # Check if the resource exists
         if not resource.is_file():
             raise FileNotFoundError(f"Resource '{resource_name}' not found in package 'spark_helper'")
+        
+        # read the spark config template
         with resource.open("r", encoding="utf-8") as f:
             content = f.read()
+
+            # add system-level config if detail is "all"
             if detail == "all":
                 content = content + "\n" + SYSTEM_LEVEL_CONFIG_YAML
+
+            # add ending comment about adding additional configurations
+            content = content + "\n" + ENDING_CONFIG_YAML
+
+            # write to file or stdout
             if file_name:
                 with open(file_name, "w", encoding="utf-8") as out_file:
                     out_file.write(content)
             else:
                 sys.stdout.write(content)
+
     except ImportError:
         raise ImportError("Could not import package 'spark_helper'")
     except Exception as e:
