@@ -30,6 +30,61 @@ pip install -e .
 pip install -e ".[dev]"
 ```
 
+### From wheel (.whl) file
+
+You can also install the package using a wheel file:
+
+```bash
+# Install the package from a wheel file
+pip install spark_helper-0.0.1.dev0-py3-none-any.whl
+```
+
+## Building the Package
+
+To build the package as a wheel file for distribution:
+
+```bash
+# Make sure you have build tools installed
+pip install --upgrade pip setuptools wheel build
+
+# Build the package
+# This will create both a source distribution (.tar.gz) and a wheel (.whl) file in the dist/ directory
+python -m build
+
+# The wheel file will be available in the dist/ directory
+# Example: dist/spark_helper-0.0.1.dev0-py3-none-any.whl
+```
+
+### Including YAML Template Files
+
+The package includes YAML template files (`spark_config_*_template.yaml`) that are essential for the functionality. To ensure these files are included in the wheel:
+
+1. The `pyproject.toml` file has been configured with:
+   ```toml
+   [tool.setuptools.package-data]
+   "spark_helper" = ["*.yaml"]
+   ```
+
+2. A `MANIFEST.in` file has been added with:
+   ```
+   include src/spark_helper/*.yaml
+   ```
+
+This ensures that when you build the package, all YAML template files will be included in the distribution.
+
+You can verify that the wheel contains the required files by:
+```bash
+# Install the wheel in a temporary environment
+python -m venv temp_env
+source temp_env/bin/activate  # On Windows use `temp_env\Scripts\activate`
+pip install dist/spark_helper-0.0.1.dev0-py3-none-any.whl
+
+# Verify the files are included
+pip show -f spark_helper | grep yaml
+```
+
+You can use the wheel file to install the package in other environments without needing the source code.
+
 ## Usage
 
 ### Creating SparkSession
